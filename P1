@@ -1,0 +1,114 @@
+```cpp
+#include <iostream>
+#include <queue>
+#include <set>
+#include <string>
+#include <vector>
+using namespace std;
+
+// Possible moves of the blank space
+int rowMove[] = {-1, 1, 0, 0};
+int colMove[] = {0, 0, -1, 1};
+
+// Check whether the move is valid
+bool isValid(int row, int col) {
+    return row >= 0 && row < 3 && col >= 0 && col < 3;
+}
+
+// Convert puzzle into a string for storing in visited set
+string toString(vector<vector<int>>& puzzle) {
+    string s = "";
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            s += char(puzzle[i][j] + '0');
+    return s;
+}
+
+// Print the puzzle
+void printPuzzle(vector<vector<int>>& puzzle) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++)
+            cout << puzzle[i][j] << " ";
+        cout << endl;
+    }
+    cout << endl;
+}
+
+// BFS function
+void BFS(vector<vector<int>> start, vector<vector<int>> goal) {
+
+    queue<vector<vector<int>>> q;
+    set<string> visited;
+
+    q.push(start);
+    visited.insert(toString(start));
+
+    while (!q.empty()) {
+
+        vector<vector<int>> current = q.front();
+        q.pop();
+
+        // Check if goal is reached
+        if (current == goal) {
+            cout << "Goal State Reached:\n";
+            printPuzzle(current);
+            return;
+        }
+
+        // Find position of blank (0)
+        int blankRow, blankCol;
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (current[i][j] == 0) {
+  
+
+        // Generate all possible moves
+        for (int k = 0; k < 4; k++) {
+
+            int newRow = blankRow + rowMove[k];
+            int newCol = blankCol + colMove[k];
+
+            if (isValid(newRow, newCol)) {
+
+                vector<vector<int>> next = current;
+
+                // Swap blank with adjacent tile
+                swap(next[blankRow][blankCol],
+                     next[newRow][newCol]);
+
+                string state = toString(next);
+
+                // If state is not visited
+                if (visited.find(state) == visited.end()) {
+
+                    visited.insert(state);
+                    q.push(next);
+                }
+            }
+        }
+    }
+
+    cout << "No solution exists.\n";
+}
+
+int main() {
+
+    vector<vector<int>> start(3, vector<int>(3));
+    vector<vector<int>> goal = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 0}
+    };
+
+    cout << "Enter initial state (use 0 for blank):\n";
+
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            cin >> start[i][j];
+
+    BFS(start, goal);
+
+    return 0;
+}
+```
